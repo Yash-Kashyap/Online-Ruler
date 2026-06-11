@@ -4,7 +4,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://onlineruler.app',
+  site: 'https://Yash-Kashyap.github.io',
+  base: '/Online-Ruler',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

@@ -11,6 +11,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const faqs = [
   {
@@ -120,10 +121,10 @@ const schema = {
 
       <!-- Quick Info Links -->
       <div class="mt-[32px] flex flex-wrap items-center justify-center gap-4 md:gap-6 text-[14px] font-medium text-ink">
-        <a href="/about" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">About Us</a>
-        <a href="/contact" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Contact Us</a>
-        <a href="/privacy" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Privacy Policy</a>
-        <a href="/terms" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Terms & Conditions</a>
+        <a href={`${basePath}/about`} class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">About Us</a>
+        <a href={`${basePath}/contact`} class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Contact Us</a>
+        <a href={`${basePath}/privacy`} class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Privacy Policy</a>
+        <a href={`${basePath}/terms`} class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Terms & Conditions</a>
       </div>
 
       <!-- Keyboard Shortcuts Legend -->
@@ -196,10 +197,10 @@ const schema = {
       <!-- Footer Links -->
       <footer class="w-full max-w-[700px] mx-auto border-t border-hairline pt-8 pb-4 text-center text-body-muted text-[14px]">
         <div class="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-4">
-          <a href="/about" class="hover:text-ink transition-colors">About Us</a>
-          <a href="/contact" class="hover:text-ink transition-colors">Contact Us</a>
-          <a href="/privacy" class="hover:text-ink transition-colors">Privacy Policy</a>
-          <a href="/terms" class="hover:text-ink transition-colors">Terms & Conditions</a>
+          <a href={`${basePath}/about`} class="hover:text-ink transition-colors">About Us</a>
+          <a href={`${basePath}/contact`} class="hover:text-ink transition-colors">Contact Us</a>
+          <a href={`${basePath}/privacy`} class="hover:text-ink transition-colors">Privacy Policy</a>
+          <a href={`${basePath}/terms`} class="hover:text-ink transition-colors">Terms & Conditions</a>
         </div>
         <p>&copy; {new Date().getFullYear()} Online Ruler. All rights reserved.</p>
       </footer>

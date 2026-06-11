@@ -7,6 +7,7 @@ interface Props {
 
 const { lang = defaultLang } = Astro.props as Props;
 const t = useTranslations(lang as any);
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <nav id="global-nav" class="nav-frosted w-full box-border shadow-sm transition-all duration-300 z-40" style="margin-left: 0; margin-right: 0;">
   <div class="flex flex-col md:flex-row items-center justify-between px-3 md:px-4 lg:px-[32px] h-full gap-2 md:gap-0">
@@ -20,10 +21,10 @@ const t = useTranslations(lang as any);
       
       <!-- Desktop Links -->
       <div class="hidden lg:flex items-center gap-5 text-[14px] font-medium text-body-muted mt-1">
-        <a href="/about" class="hover:text-ink transition-colors">About</a>
-        <a href="/contact" class="hover:text-ink transition-colors">Contact</a>
-        <a href="/privacy" class="hover:text-ink transition-colors">Privacy</a>
-        <a href="/terms" class="hover:text-ink transition-colors">Terms</a>
+        <a href={`${basePath}/about`} class="hover:text-ink transition-colors">About</a>
+        <a href={`${basePath}/contact`} class="hover:text-ink transition-colors">Contact</a>
+        <a href={`${basePath}/privacy`} class="hover:text-ink transition-colors">Privacy</a>
+        <a href={`${basePath}/terms`} class="hover:text-ink transition-colors">Terms</a>
       </div>
       <!-- Calibrate Button for Mobile -->
       <button class="btn-calibrate-trigger btn-primary text-[14px] px-[16px] py-[6px] md:hidden">{t('nav.calibrate')}</button>
@@ -49,11 +50,15 @@ const t = useTranslations(lang as any);
           </button>
           <div class="absolute right-0 top-full pt-2 hidden group-hover:block z-50">
             <div class="w-[120px] bg-canvas rounded-xl shadow-product border border-hairline py-2">
-              {Object.entries(languages).map(([code, name]) => (
-                <a href={code === defaultLang ? '/' : `/${code}/`} class={`block px-4 py-2 text-[14px] hover:bg-canvas-parchment transition-colors ${code === lang ? 'text-primary font-medium' : 'text-ink'}`}>
-                  {name}
-                </a>
-              ))}
+              {Object.entries(languages).map(([code, name]) => {
+                const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+                const targetUrl = code === defaultLang ? `${basePath}/` : `${basePath}/${code}/`;
+                return (
+                  <a href={targetUrl} class={`block px-4 py-2 text-[14px] hover:bg-canvas-parchment transition-colors ${code === lang ? 'text-primary font-medium' : 'text-ink'}`}>
+                    {name}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
