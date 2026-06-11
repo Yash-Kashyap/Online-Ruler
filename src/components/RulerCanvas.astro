@@ -1,0 +1,360 @@
+---
+---
+<div id="rulers-container" class="fixed inset-0 pointer-events-none z-10 overflow-hidden">
+  <canvas id="canvas-top" class="absolute top-0 left-0 right-0 w-full h-[60px] pointer-events-auto cursor-crosshair" style="display: none;"></canvas>
+  <canvas id="canvas-bottom" class="absolute bottom-0 left-0 right-0 w-full h-[60px] pointer-events-auto cursor-crosshair" style="display: none;"></canvas>
+  <canvas id="canvas-left" class="absolute top-0 left-0 bottom-0 w-[60px] h-full pointer-events-auto cursor-crosshair" style="display: none;"></canvas>
+  <canvas id="canvas-right" class="absolute top-0 right-0 bottom-0 w-[60px] h-full pointer-events-auto cursor-crosshair" style="display: none;"></canvas>
+  
+  <!-- Guidelines Layer -->
+  <div id="guidelines-layer" class="absolute inset-0 pointer-events-none hidden"></div>
+
+  <!-- Crosshair Layer -->
+  <div id="crosshair-x" class="fixed top-0 bottom-0 left-0 w-px bg-primary pointer-events-none z-20 hidden"></div>
+  <div id="crosshair-y" class="fixed left-0 right-0 top-0 h-px bg-primary pointer-events-none z-20 hidden"></div>
+  <div id="crosshair-label" class="fixed top-0 left-0 bg-canvas text-ink border border-primary px-2 py-1 rounded shadow-sm text-[12px] font-mono pointer-events-none z-30 hidden whitespace-nowrap"></div>
+</div>
+
+<script>
+  import { rulerStore } from '../store/rulerStore';
+
+  const canvases = {
+    top: document.getElementById('canvas-top') as HTMLCanvasElement,
+    bottom: document.getElementById('canvas-bottom') as HTMLCanvasElement,
+    left: document.getElementById('canvas-left') as HTMLCanvasElement,
+    right: document.getElementById('canvas-right') as HTMLCanvasElement,
+  };
+
+  const guidelinesLayer = document.getElementById('guidelines-layer');
+
+  const THICKNESS = 60; // px
+
+  function resizeCanvases() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+
+    if (canvases.top) {
+      canvases.top.width = w * dpr;
+      canvases.top.height = THICKNESS * dpr;
+    }
+    if (canvases.bottom) {
+      canvases.bottom.width = w * dpr;
+      canvases.bottom.height = THICKNESS * dpr;
+    }
+    if (canvases.left) {
+      canvases.left.width = THICKNESS * dpr;
+      canvases.left.height = h * dpr;
+    }
+    if (canvases.right) {
+      canvases.right.width = THICKNESS * dpr;
+      canvases.right.height = h * dpr;
+    }
+    drawRulers();
+  }
+
+  window.addEventListener('resize', resizeCanvases);
+
+  function getPixelLabel(px: number, unit: string, ppi: number) {
+    let ppu = ppi;
+    if (unit === 'cm') ppu = ppi / 2.54;
+    else if (unit === 'px') ppu = 100;
+
+    let val;
+    if (unit === 'px') {
+        val = Math.round(px * window.devicePixelRatio);
+    } else {
+        val = (px / ppu).toFixed(1);
+    }
+    return `${val} ${unit}`;
+  }
+
+  function renderGuidelines() {
+    if (!guidelinesLayer) return;
+    const state = rulerStore.getState();
+    
+    if (!state.showGuidelines) {
+      guidelinesLayer.classList.add('hidden');
+      return;
+    }
+    guidelinesLayer.classList.remove('hidden');
+    guidelinesLayer.innerHTML = '';
+
+    state.guidelines.forEach(g => {
+      const marker = document.createElement('div');
+      marker.className = 'absolute pointer-events-auto cursor-pointer group guideline-marker z-10';
+      marker.style.left = `${g.x}px`;
+      marker.style.top = `${g.y}px`;
+      marker.title = 'Double click to remove';
+      
+      // Vertical projection line
+      const vLine = document.createElement('div');
+      vLine.className = 'absolute bg-primary/50 w-px pointer-events-none group-hover:bg-red-500/50 transition-colors transform -translate-x-1/2';
+      vLine.style.top = `-${g.y}px`;
+      vLine.style.left = '0';
+      vLine.style.height = '100vh';
+      marker.appendChild(vLine);
+
+      // Horizontal projection line
+      const hLine = document.createElement('div');
+      hLine.className = 'absolute bg-primary/50 h-px pointer-events-none group-hover:bg-red-500/50 transition-colors transform -translate-y-1/2';
+      hLine.style.left = `-${g.x}px`;
+      hLine.style.top = '0';
+      hLine.style.width = '100vw';
+      marker.appendChild(hLine);
+
+      const dot = document.createElement('div');
+      dot.className = 'w-3 h-3 bg-primary rounded-full absolute top-0 left-0 transform -translate-x-1/2 -translate-y-1/2 shadow-sm group-hover:bg-red-500 transition-colors border-2 border-canvas z-20';
+      marker.appendChild(dot);
+
+      const label = document.createElement('div');
+      label.className = 'absolute bg-canvas text-ink border border-primary text-[10px] font-mono px-1 rounded shadow-sm whitespace-nowrap pointer-events-none group-hover:border-red-500 group-hover:text-red-500';
+      label.textContent = `x: ${getPixelLabel(g.x, state.unit, state.ppi)} y: ${getPixelLabel(g.y, state.unit, state.ppi)}`;
+      label.style.left = '8px';
+      label.style.top = '8px';
+
+      marker.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        rulerStore.removeGuideline(g.id);
+      });
+      marker.appendChild(label);
+      guidelinesLayer.appendChild(marker);
+    });
+  }
+
+  function drawRulers() {
+    const state = rulerStore.getState();
+    const dpr = window.devicePixelRatio || 1;
+    const { ppi, unit, activeEdges } = state;
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const bgColor = isDark ? '#000000' : '#ffffff';
+    const fgColor = isDark ? '#ffffff' : '#1d1d1f';
+    const borderColor = isDark ? '#424245' : '#e0e0e0';
+
+    let ppu = ppi;
+    if (unit === 'cm') ppu = ppi / 2.54;
+    else if (unit === 'px') ppu = 100;
+
+    Object.entries(canvases).forEach(([edge, canvas]) => {
+      if (!canvas) return;
+      if (!activeEdges.has(edge as any)) {
+        canvas.style.display = 'none';
+        return;
+      }
+      canvas.style.display = 'block';
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.fillStyle = fgColor;
+      ctx.strokeStyle = fgColor;
+      ctx.lineWidth = 1 * dpr;
+      ctx.font = `${12 * dpr}px 'SF Pro Text', Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      const isHorizontal = edge === 'top' || edge === 'bottom';
+      const maxDist = isHorizontal ? width : height;
+
+      ctx.fillStyle = bgColor; 
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = fgColor;
+
+      ctx.beginPath();
+      if (edge === 'top') {
+        ctx.moveTo(0, height);
+        ctx.lineTo(width, height);
+      } else if (edge === 'bottom') {
+        ctx.moveTo(0, 0);
+        ctx.lineTo(width, 0);
+      } else if (edge === 'left') {
+        ctx.moveTo(width, 0);
+        ctx.lineTo(width, height);
+      } else if (edge === 'right') {
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, height);
+      }
+      ctx.strokeStyle = borderColor;
+      ctx.stroke();
+      ctx.strokeStyle = fgColor;
+
+      let subDivisions = unit === 'in' ? 16 : 10;
+      let pxStep = (ppu * dpr) / subDivisions;
+
+      for (let i = 0; i * pxStep <= maxDist; i++) {
+        const pos = Math.round(i * pxStep) + 0.5;
+        
+        let isMajor = i % subDivisions === 0;
+        let isMedium = unit === 'in' ? (i % 8 === 0) : (i % 5 === 0);
+        let tickLen = isMajor ? 20 * dpr : isMedium ? 15 * dpr : 8 * dpr;
+        
+        ctx.beginPath();
+        let x1, y1, x2, y2;
+
+        if (edge === 'top') {
+          x1 = x2 = pos; y1 = 0; y2 = tickLen;
+        } else if (edge === 'bottom') {
+          x1 = x2 = pos; y1 = height; y2 = height - tickLen;
+        } else if (edge === 'left') {
+          x1 = 0; x2 = tickLen; y1 = y2 = pos;
+        } else if (edge === 'right') {
+          x1 = width; x2 = width - tickLen; y1 = y2 = pos;
+        }
+
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        if (isMajor) {
+          const val = i / subDivisions;
+          let textX, textY;
+          ctx.save();
+          if (edge === 'top') {
+            textX = pos; textY = tickLen + 10 * dpr;
+            ctx.translate(textX, textY);
+            ctx.fillText(val.toString(), 0, 0);
+          } else if (edge === 'bottom') {
+            textX = pos; textY = height - tickLen - 10 * dpr;
+            ctx.translate(textX, textY);
+            ctx.rotate(Math.PI);
+            ctx.fillText(val.toString(), 0, 0);
+          } else if (edge === 'left') {
+            textX = tickLen + 10 * dpr; textY = pos;
+            ctx.translate(textX, textY);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText(val.toString(), 0, 0);
+          } else if (edge === 'right') {
+            textX = width - tickLen - 10 * dpr; textY = pos;
+            ctx.translate(textX, textY);
+            ctx.rotate(Math.PI / 2);
+            ctx.fillText(val.toString(), 0, 0);
+          }
+          ctx.restore();
+        }
+      }
+    });
+
+    renderGuidelines();
+  }
+
+  rulerStore.subscribe(() => {
+    drawRulers();
+  });
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class') {
+        drawRulers();
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+
+  setTimeout(resizeCanvases, 0);
+
+  // Crosshair Logic
+  const crossX = document.getElementById('crosshair-x');
+  const crossY = document.getElementById('crosshair-y');
+  const crossLabel = document.getElementById('crosshair-label');
+
+  window.addEventListener('mousemove', (e) => {
+    const state = rulerStore.getState();
+    if (!crossX || !crossY || !crossLabel) return;
+    
+    if (state.activeEdges.size === 0 || !state.showCrosshair) {
+      crossX.classList.add('hidden');
+      crossY.classList.add('hidden');
+      crossLabel.classList.add('hidden');
+      return;
+    }
+
+    crossX.style.transform = `translateX(${e.clientX}px)`;
+    crossX.classList.remove('hidden');
+
+    crossY.style.transform = `translateY(${e.clientY}px)`;
+    crossY.classList.remove('hidden');
+    
+    crossLabel.textContent = `x: ${getPixelLabel(e.clientX, state.unit, state.ppi)} y: ${getPixelLabel(e.clientY, state.unit, state.ppi)}`;
+    
+    let lx = e.clientX + 16;
+    let ly = e.clientY + 16;
+    if (lx + crossLabel.offsetWidth > window.innerWidth) lx = e.clientX - 16 - crossLabel.offsetWidth;
+    if (ly + crossLabel.offsetHeight > window.innerHeight) ly = e.clientY - 16 - crossLabel.offsetHeight;
+    
+    crossLabel.style.transform = `translate(${lx}px, ${ly}px)`;
+    crossLabel.classList.remove('hidden');
+  });
+
+  document.body.addEventListener('mouseleave', () => {
+    crossX?.classList.add('hidden');
+    crossY?.classList.add('hidden');
+    crossLabel?.classList.add('hidden');
+  });
+
+  // Adding Guidelines globally
+  document.addEventListener('click', (e) => {
+    // Ignore clicks on navbar, modal, or markers themselves
+    const target = e.target as HTMLElement;
+    if (target.closest('nav') || target.closest('dialog') || target.closest('.guideline-marker')) return;
+    
+    // Check if clicking inside feature cards or buttons that should do something else
+    if (target.closest('button') || target.closest('a') || target.closest('.edge-toggle')) return;
+
+    const state = rulerStore.getState();
+    if (!state.showGuidelines) return;
+
+    rulerStore.addGuideline(e.clientX, e.clientY);
+  });
+
+  // Global Keyboard Shortcuts
+  window.addEventListener('keydown', (e) => {
+    // Ignore if typing in an input field
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    
+    const key = e.key.toLowerCase();
+    
+    if (key === 'd') {
+      e.preventDefault();
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+    
+    if (key === 'g') {
+      e.preventDefault();
+      const state = rulerStore.getState();
+      rulerStore.setState({ showGuidelines: !state.showGuidelines });
+    }
+    
+    if (key === 'h') {
+      e.preventDefault();
+      const state = rulerStore.getState();
+      rulerStore.setState({ showCrosshair: !state.showCrosshair });
+      // Force hide if toggled off
+      if (state.showCrosshair && crossX) {
+        crossX.classList.add('hidden');
+        crossY.classList.add('hidden');
+        crossLabel.classList.add('hidden');
+      }
+    }
+    
+    if (key === 'f') {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    
+    if (e.key === 'ArrowUp') { e.preventDefault(); rulerStore.toggleEdge('top'); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); rulerStore.toggleEdge('bottom'); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); rulerStore.toggleEdge('left'); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); rulerStore.toggleEdge('right'); }
+  });
+</script>

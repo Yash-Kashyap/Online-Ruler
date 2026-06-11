@@ -1,0 +1,256 @@
+---
+import { useTranslations, languages, defaultLang } from '../i18n/ui';
+
+interface Props {
+  lang: keyof typeof languages;
+}
+
+const { lang = defaultLang } = Astro.props as Props;
+const t = useTranslations(lang as any);
+
+const devices = [
+  { category: 'TABLET', items: [
+    { name: 'Samsung Galaxy Tab S9 Ultra', ppi: 208 },
+    { name: 'Microsoft Surface Pro 9', ppi: 267 }
+  ]},
+  { category: 'IPAD', items: [
+    { name: 'iPad Pro 11"', ppi: 264 },
+    { name: 'iPad Air (5th gen)', ppi: 264 },
+    { name: 'iPad mini (6th gen)', ppi: 326 },
+    { name: 'iPad (10th gen)', ppi: 264 }
+  ]},
+  { category: 'LAPTOP', items: [
+    { name: 'Surface Pro 9 (13")', ppi: 267 },
+    { name: 'HP Spectre x360 (13.5")', ppi: 227 },
+    { name: 'Lenovo ThinkPad X1 (14")', ppi: 157 },
+    { name: 'Dell XPS 13 (13.4")', ppi: 166 },
+    { name: 'Surface Laptop 5 (13.5")', ppi: 201 }
+  ]},
+  { category: 'IPHONE', items: [
+    { name: 'iPhone 16 Pro / 15 Pro', ppi: 460 },
+    { name: 'iPhone 16 / 15 / 14', ppi: 460 },
+    { name: 'iPhone 13 / 12', ppi: 460 }
+  ]},
+  { category: 'ANDROID', items: [
+    { name: 'Samsung Galaxy S24 Ultra', ppi: 505 },
+    { name: 'Samsung Galaxy S24 / S23', ppi: 416 },
+    { name: 'Google Pixel 8 Pro', ppi: 489 },
+    { name: 'Google Pixel 8', ppi: 428 },
+    { name: 'OnePlus 12', ppi: 510 }
+  ]},
+  { category: 'MACBOOK', items: [
+    { name: 'MacBook Pro 13"', ppi: 227 },
+    { name: 'MacBook Pro 14" M3', ppi: 254 },
+    { name: 'MacBook Pro 16" M3', ppi: 254 }
+  ]}
+];
+---
+<dialog id="calibration-modal" class="bg-transparent m-auto p-0 backdrop:bg-surface-black/40 backdrop:backdrop-blur-sm open:flex inset-0 z-50 transition-opacity">
+  <div class="bg-canvas text-ink rounded-[18px] w-[90vw] max-w-[500px] shadow-product flex flex-col overflow-hidden max-h-[90vh]">
+    <!-- Header -->
+    <div class="px-[24px] py-[16px] border-b border-hairline flex justify-between items-center bg-canvas-parchment">
+      <div class="flex flex-col">
+        <span class="text-[10px] uppercase tracking-widest text-body-muted font-semibold mb-1 flex items-center gap-2">
+          Calibration <span id="current-calibration-label" class="text-primary normal-case font-normal text-[11px] tracking-normal bg-primary/10 px-1.5 py-0.5 rounded"></span>
+        </span>
+        <h2 class="text-[21px] font-semibold tracking-[0.231px]">{t('modal.title')}</h2>
+      </div>
+      <button id="close-modal" class="text-body-muted hover:text-ink transition-colors p-[4px] outline-none rounded-md focus-visible:ring-2 focus-visible:ring-primary-focus" aria-label="Close modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="flex p-1 bg-black/5 dark:bg-white/10 rounded-[12px] mx-[24px] mt-[24px]">
+      <button data-tab="auto" class="tab-btn flex-1 py-1.5 text-[14px] rounded-[8px] aria-selected:bg-canvas aria-selected:text-ink text-body-muted aria-selected:shadow-sm font-medium transition-all" aria-selected="false">{t('modal.autodetect')}</button>
+      <button data-tab="device" class="tab-btn flex-1 py-1.5 text-[14px] rounded-[8px] aria-selected:bg-canvas aria-selected:text-ink text-body-muted aria-selected:shadow-sm font-medium transition-all" aria-selected="true">{t('modal.device')}</button>
+      <button data-tab="diagonal" class="tab-btn flex-1 py-1.5 text-[14px] rounded-[8px] aria-selected:bg-canvas aria-selected:text-ink text-body-muted aria-selected:shadow-sm font-medium transition-all" aria-selected="false">{t('modal.diagonal')}</button>
+      <button data-tab="card" class="tab-btn flex-1 py-1.5 text-[14px] rounded-[8px] aria-selected:bg-canvas aria-selected:text-ink text-body-muted aria-selected:shadow-sm font-medium transition-all" aria-selected="false">{t('modal.card')}</button>
+    </div>
+
+    <!-- Content Areas -->
+    <div class="flex-1 overflow-y-auto">
+      
+      <!-- Auto Detect -->
+      <div id="tab-auto" class="tab-content hidden p-[24px] flex flex-col gap-[16px]">
+        <p class="text-[14px] text-body-muted leading-[1.43]">{t('modal.auto.desc')}</p>
+        <button id="btn-auto-detect" class="btn-dark-utility self-start">{t('modal.auto.btn')}</button>
+        <p id="auto-detect-result" class="text-[14px] text-primary hidden mt-[4px] font-medium"></p>
+      </div>
+
+      <!-- Device List -->
+      <div id="tab-device" class="tab-content p-[24px] flex flex-col gap-[16px]">
+        <p class="text-[14px] text-body-muted">{t('modal.device.desc')}</p>
+        <div class="border border-hairline rounded-[12px] overflow-hidden overflow-y-auto max-h-[300px]">
+          {devices.map((group, groupIdx) => (
+            <div>
+              <div class="bg-canvas-parchment px-[16px] py-[8px] text-[12px] font-semibold text-body-muted tracking-widest uppercase">
+                {group.category}
+              </div>
+              {group.items.map((item, itemIdx) => (
+                <button class="device-btn w-full text-left px-[16px] py-[12px] border-b border-hairline last:border-b-0 bg-canvas hover:bg-canvas-parchment flex justify-between items-center transition-colors" data-ppi={item.ppi}>
+                  <span class="text-[14px] font-medium">{item.name}</span>
+                  <span class="text-[14px] text-body-muted font-mono">{item.ppi} PPI</span>
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Diagonal -->
+      <div id="tab-diagonal" class="tab-content hidden p-[24px] flex flex-col gap-[16px]">
+        <p class="text-[14px] font-medium text-ink">{t('modal.diag.desc')}</p>
+        <div class="flex items-center gap-[12px]">
+          <input id="input-diagonal" type="number" step="0.1" placeholder="e.g. 13.3" class="bg-canvas border border-hairline rounded-[12px] px-[16px] py-[12px] text-[14px] w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary" aria-label="Screen diagonal in inches" />
+          <button id="btn-apply-diagonal" class="btn-primary whitespace-nowrap">{t('modal.diag.btn')}</button>
+        </div>
+        <p class="text-[14px] text-body-muted leading-[1.43]">{t('modal.diag.hint')}</p>
+      </div>
+
+      <!-- Credit Card -->
+      <div id="tab-card" class="tab-content hidden p-[24px] flex flex-col gap-[16px]">
+        <p class="text-[14px] text-body-muted leading-[1.43]">{t('modal.card.desc')}</p>
+        <div class="flex justify-center my-[8px] overflow-hidden">
+          <div id="card-box" class="border-2 border-primary bg-primary/10 rounded-[8px] flex items-center justify-center transition-all" style="width: 323.5px; height: 204px;" aria-hidden="true">
+            <span class="text-[12px] text-primary font-semibold tracking-tight-apple">{t('modal.card.box')}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-[12px] w-full mt-[8px]">
+          <span class="text-[12px] whitespace-nowrap text-body-muted" aria-hidden="true">{t('modal.card.smaller')}</span>
+          <input id="slider-card" type="range" min="50" max="250" value="96" class="w-full accent-primary h-2 bg-hairline rounded-lg appearance-none cursor-pointer" aria-label="Adjust credit card size" />
+          <span class="text-[12px] whitespace-nowrap text-body-muted" aria-hidden="true">{t('modal.card.larger')}</span>
+        </div>
+        <button id="btn-apply-card" class="btn-primary w-full mt-[8px]">{t('modal.card.btn')}</button>
+      </div>
+
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { rulerStore } from '../store/rulerStore';
+
+  const modal = document.getElementById('calibration-modal') as HTMLDialogElement;
+  const btnClose = document.getElementById('close-modal');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  window.addEventListener('open-calibration', () => {
+    modal?.showModal();
+    const state = rulerStore.getState();
+    const slider = document.getElementById('slider-card') as HTMLInputElement;
+    if (slider) {
+      slider.value = state.ppi.toString();
+      updateCardBox(state.ppi);
+    }
+    
+    const inputDiag = document.getElementById('input-diagonal') as HTMLInputElement;
+    if (inputDiag) {
+      const w = window.screen.width;
+      const h = window.screen.height;
+      const diagPixels = Math.sqrt(w*w + h*h);
+      const inches = (diagPixels / state.ppi).toFixed(1);
+      // Only pre-fill if not already filled or if we just opened it
+      inputDiag.value = inches;
+    }
+  });
+
+  const currentLabel = document.getElementById('current-calibration-label');
+  rulerStore.subscribe((state) => {
+    if (currentLabel) {
+      const w = window.screen.width;
+      const h = window.screen.height;
+      const diagPixels = Math.sqrt(w*w + h*h);
+      const inches = (diagPixels / state.ppi).toFixed(1);
+      currentLabel.textContent = `Active: ~${inches}" (${Math.round(state.ppi)} PPI)`;
+    }
+  });
+
+  btnClose?.addEventListener('click', () => {
+    modal?.close();
+  });
+
+  // accessibility for dialog
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) modal.close(); // click outside to close
+  });
+
+  // Tab switching logic
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-tab');
+      
+      // Update buttons
+      tabBtns.forEach(b => b.setAttribute('aria-selected', 'false'));
+      btn.setAttribute('aria-selected', 'true');
+
+      // Update content visibility
+      tabContents.forEach(content => {
+        if (content.id === `tab-${target}`) {
+          content.classList.remove('hidden');
+        } else {
+          content.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  // Auto-detect
+  document.getElementById('btn-auto-detect')?.addEventListener('click', () => {
+    let estimatedPpi = 96;
+    rulerStore.setState({ ppi: estimatedPpi });
+    
+    const res = document.getElementById('auto-detect-result');
+    if (res) {
+      res.textContent = `Estimated PPI: ${Math.round(estimatedPpi)}. Please verify with a physical ruler for exact precision.`;
+      res.style.display = 'block';
+    }
+  });
+
+  // Device selection
+  document.querySelectorAll('.device-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ppi = parseFloat(btn.getAttribute('data-ppi') || '96');
+      rulerStore.setState({ ppi });
+      modal?.close();
+    });
+  });
+
+  // Diagonal
+  document.getElementById('btn-apply-diagonal')?.addEventListener('click', () => {
+    const input = document.getElementById('input-diagonal') as HTMLInputElement;
+    const diagInches = parseFloat(input.value);
+    if (diagInches > 0) {
+      const w = window.screen.width;
+      const h = window.screen.height;
+      const diagPixels = Math.sqrt(w*w + h*h);
+      const ppi = diagPixels / diagInches;
+      rulerStore.setState({ ppi });
+      modal?.close();
+    }
+  });
+
+  // Credit Card
+  const slider = document.getElementById('slider-card') as HTMLInputElement;
+  const cardBox = document.getElementById('card-box');
+  
+  function updateCardBox(ppi: number) {
+    if (!cardBox) return;
+    const widthPx = 3.375 * ppi;
+    const heightPx = 2.125 * ppi;
+    cardBox.style.width = `${widthPx}px`;
+    cardBox.style.height = `${heightPx}px`;
+  }
+
+  slider?.addEventListener('input', (e) => {
+    const ppi = parseFloat((e.target as HTMLInputElement).value);
+    updateCardBox(ppi);
+  });
+
+  document.getElementById('btn-apply-card')?.addEventListener('click', () => {
+    const ppi = parseFloat(slider.value);
+    rulerStore.setState({ ppi });
+    modal?.close();
+  });
+</script>

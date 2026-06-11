@@ -1,0 +1,202 @@
+---
+import { useTranslations, languages, defaultLang } from '../i18n/ui';
+
+interface Props {
+  lang: keyof typeof languages;
+}
+
+const { lang = defaultLang } = Astro.props as Props;
+const t = useTranslations(lang as any);
+---
+<nav id="global-nav" class="nav-frosted w-full box-border shadow-sm transition-all duration-300 z-40" style="margin-left: 0; margin-right: 0;">
+  <div class="flex flex-col md:flex-row items-center justify-between px-3 md:px-4 lg:px-[32px] h-full gap-2 md:gap-0">
+    
+    <!-- Top Row (Mobile) / Left Side (Desktop) -->
+    <div class="flex items-center justify-between w-full md:w-auto mt-1 md:mt-0">
+      <div class="text-[21px] font-semibold tracking-[0.231px] flex items-center gap-[8px]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+        <span class="hidden sm:inline">{t('nav.title')}</span>
+      </div>
+      <!-- Calibrate Button for Mobile -->
+      <button class="btn-calibrate-trigger btn-primary text-[14px] px-[16px] py-[6px] md:hidden">{t('nav.calibrate')}</button>
+    </div>
+
+    <!-- Bottom Row (Mobile) / Right Side (Desktop) -->
+    <div class="flex flex-wrap items-center gap-1 sm:gap-2 md:gap-[16px] w-full md:w-auto justify-center md:justify-end mb-1 md:mb-0">
+      
+      <!-- Edge Toggles -->
+      <div class="flex items-center gap-0.5 md:gap-1 bg-canvas rounded-lg p-1 border border-hairline flex-shrink-0">
+        <button data-edge="top" class="edge-toggle text-[12px] md:text-[14px] px-2 md:px-3 py-1 md:py-1.5 rounded-md hover:bg-canvas-parchment aria-pressed:bg-ink aria-pressed:text-on-dark transition-colors" aria-pressed="true">{t('nav.top')}</button>
+        <button data-edge="bottom" class="edge-toggle text-[12px] md:text-[14px] px-2 md:px-3 py-1 md:py-1.5 rounded-md hover:bg-canvas-parchment aria-pressed:bg-ink aria-pressed:text-on-dark transition-colors" aria-pressed="false">{t('nav.bottom')}</button>
+        <button data-edge="left" class="edge-toggle text-[12px] md:text-[14px] px-2 md:px-3 py-1 md:py-1.5 rounded-md hover:bg-canvas-parchment aria-pressed:bg-ink aria-pressed:text-on-dark transition-colors" aria-pressed="false">{t('nav.left')}</button>
+        <button data-edge="right" class="edge-toggle text-[12px] md:text-[14px] px-2 md:px-3 py-1 md:py-1.5 rounded-md hover:bg-canvas-parchment aria-pressed:bg-ink aria-pressed:text-on-dark transition-colors" aria-pressed="false">{t('nav.right')}</button>
+      </div>
+
+      <!-- Settings / Toggles -->
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <!-- Language Selector -->
+        <div class="relative group">
+          <button class="p-1 md:p-2 text-ink hover:bg-canvas-parchment rounded-full transition-colors flex items-center justify-center font-semibold text-[14px] uppercase" aria-label="Select language">
+            {lang.toUpperCase()}
+          </button>
+          <div class="absolute right-0 top-full pt-2 hidden group-hover:block z-50">
+            <div class="w-[120px] bg-canvas rounded-xl shadow-product border border-hairline py-2">
+              {Object.entries(languages).map(([code, name]) => (
+                <a href={code === defaultLang ? '/' : `/${code}/`} class={`block px-4 py-2 text-[14px] hover:bg-canvas-parchment transition-colors ${code === lang ? 'text-primary font-medium' : 'text-ink'}`}>
+                  {name}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-guidelines" class="p-1 md:p-2 text-ink hover:bg-canvas-parchment rounded-full transition-colors flex-shrink-0 relative group" aria-label="Toggle guidelines">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke-width="2"></circle><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v7m0 6v7m10-10h-7m-6 0H2"></path></svg>
+          <div class="absolute top-full mt-2 hidden group-hover:block bg-ink text-canvas text-[10px] px-2 py-1 rounded whitespace-nowrap z-50">Guidelines (G)</div>
+        </button>
+
+        <button id="btn-crosshair" class="p-1 md:p-2 text-ink hover:bg-canvas-parchment rounded-full transition-colors flex-shrink-0 relative group" aria-label="Toggle crosshair">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <div class="absolute top-full mt-2 hidden group-hover:block bg-ink text-canvas text-[10px] px-2 py-1 rounded whitespace-nowrap z-50">Crosshair (H)</div>
+        </button>
+
+        <button id="btn-theme" class="p-1 md:p-2 text-ink hover:bg-canvas-parchment rounded-full transition-colors flex-shrink-0 relative group" aria-label="Toggle dark mode">
+          <svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        </button>
+        <button id="btn-fullscreen" class="p-1 md:p-2 text-ink hover:bg-canvas-parchment rounded-full transition-colors hidden md:block flex-shrink-0" aria-label="Toggle fullscreen">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+        </button>
+      </div>
+
+      <!-- Unit Toggles -->
+      <div class="flex items-center bg-canvas rounded-lg border border-hairline p-1 flex-shrink-0">
+        <button data-unit="cm" class="unit-toggle px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[14px] rounded-md aria-pressed:bg-canvas-parchment font-medium transition-colors" aria-pressed="true">cm</button>
+        <button data-unit="in" class="unit-toggle px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[14px] rounded-md aria-pressed:bg-canvas-parchment font-medium transition-colors" aria-pressed="false">in</button>
+        <button data-unit="px" class="unit-toggle px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[14px] rounded-md aria-pressed:bg-canvas-parchment font-medium transition-colors" aria-pressed="false">px</button>
+      </div>
+
+      <!-- Calibrate Button for Desktop -->
+      <button class="btn-calibrate-trigger btn-primary text-[14px] px-[16px] py-[8px] flex-shrink-0 hidden md:block">{t('nav.calibrate')}</button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  import { rulerStore } from '../store/rulerStore';
+
+  const edgeToggles = document.querySelectorAll('.edge-toggle');
+  const unitToggles = document.querySelectorAll('.unit-toggle');
+  const nav = document.getElementById('global-nav');
+  const btnGuidelines = document.getElementById('btn-guidelines');
+  const btnCrosshair = document.getElementById('btn-crosshair');
+
+  function updateUI() {
+    const state = rulerStore.getState();
+    
+    edgeToggles.forEach(btn => {
+      const edge = btn.getAttribute('data-edge');
+      const isActive = state.activeEdges.has(edge as any);
+      btn.setAttribute('aria-pressed', isActive.toString());
+    });
+
+    unitToggles.forEach(btn => {
+      const unit = btn.getAttribute('data-unit');
+      btn.setAttribute('aria-pressed', (state.unit === unit).toString());
+    });
+    
+    if (btnGuidelines) {
+      if (state.showGuidelines) {
+        btnGuidelines.classList.add('bg-canvas-parchment', 'text-primary');
+      } else {
+        btnGuidelines.classList.remove('bg-canvas-parchment', 'text-primary');
+      }
+    }
+
+    if (btnCrosshair) {
+      if (state.showCrosshair) {
+        btnCrosshair.classList.add('bg-canvas-parchment', 'text-primary');
+      } else {
+        btnCrosshair.classList.remove('bg-canvas-parchment', 'text-primary');
+      }
+    }
+
+    if (nav) {
+      const hasTop = state.activeEdges.has('top');
+      const hasLeft = state.activeEdges.has('left');
+      const hasRight = state.activeEdges.has('right');
+
+      const leftOffset = hasLeft ? 60 : 0;
+      const rightOffset = hasRight ? 60 : 0;
+
+      nav.style.marginLeft = `${leftOffset}px`;
+      nav.style.marginRight = `${rightOffset}px`;
+      nav.style.width = `calc(100% - ${leftOffset + rightOffset}px)`;
+
+      if (hasTop) {
+        nav.style.transform = 'translateY(60px)';
+      } else {
+        nav.style.transform = 'translateY(0)';
+      }
+    }
+  }
+
+  edgeToggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const edge = btn.getAttribute('data-edge') as any;
+      rulerStore.toggleEdge(edge);
+    });
+  });
+
+  unitToggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const unit = btn.getAttribute('data-unit') as any;
+      rulerStore.setState({ unit });
+    });
+  });
+
+  rulerStore.subscribe(updateUI);
+
+  if (btnGuidelines) {
+    btnGuidelines.addEventListener('click', () => {
+      const state = rulerStore.getState();
+      rulerStore.setState({ showGuidelines: !state.showGuidelines });
+    });
+  }
+
+  if (btnCrosshair) {
+    btnCrosshair.addEventListener('click', () => {
+      const state = rulerStore.getState();
+      rulerStore.setState({ showCrosshair: !state.showCrosshair });
+    });
+  }
+
+  const calibrateBtns = document.querySelectorAll('.btn-calibrate-trigger');
+  calibrateBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-calibration'));
+    });
+  });
+
+  const btnTheme = document.getElementById('btn-theme');
+  if (btnTheme) {
+    btnTheme.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  }
+
+  const btnFullscreen = document.getElementById('btn-fullscreen');
+  if (btnFullscreen) {
+    btnFullscreen.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --color-primary: #0066cc;
+    --color-primary-focus: #0071e3;
+    --color-primary-on-dark: #2997ff;
+    --color-ink: #1d1d1f;
+    --color-body: #1d1d1f;
+    --color-body-on-dark: #ffffff;
+    --color-body-muted: #cccccc;
+    --color-ink-muted-80: #333333;
+    --color-ink-muted-48: #7a7a7a;
+    --color-divider-soft: #f0f0f0;
+    --color-hairline: #e0e0e0;
+    --color-canvas: #ffffff;
+    --color-canvas-parchment: #f5f5f7;
+    --color-surface-pearl: #fafafc;
+    --color-surface-tile-1: #272729;
+    --color-surface-tile-2: #2a2a2c;
+    --color-surface-tile-3: #252527;
+    --color-surface-black: #000000;
+    --color-surface-chip-translucent: rgba(210, 210, 215, 0.64);
+    --color-on-primary: #ffffff;
+    --color-on-dark: #ffffff;
+  }
+  
+  .dark {
+    --color-primary: #0a84ff;
+    --color-primary-focus: #409cff;
+    --color-primary-on-dark: #0a84ff;
+    --color-ink: #f5f5f7;
+    --color-body: #f5f5f7;
+    --color-body-on-dark: #1d1d1f;
+    --color-body-muted: #86868b;
+    --color-ink-muted-80: #a1a1a6;
+    --color-ink-muted-48: #86868b;
+    --color-divider-soft: #333336;
+    --color-hairline: #424245;
+    --color-canvas: #000000;
+    --color-canvas-parchment: #1c1c1e;
+    --color-surface-pearl: #1c1c1e;
+    --color-surface-tile-1: #1c1c1e;
+    --color-surface-tile-2: #2c2c2e;
+    --color-surface-tile-3: #3a3a3c;
+    --color-surface-black: #ffffff;
+    --color-surface-chip-translucent: rgba(255, 255, 255, 0.1);
+    --color-on-primary: #ffffff;
+    --color-on-dark: #1d1d1f;
+  }
+
+  html {
+    font-family: var(--font-text);
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-focus: var(--color-primary-focus);
+  --color-primary-on-dark: var(--color-primary-on-dark);
+  --color-ink: var(--color-ink);
+  --color-body: var(--color-body);
+  --color-body-on-dark: var(--color-body-on-dark);
+  --color-body-muted: var(--color-body-muted);
+  --color-ink-muted-80: var(--color-ink-muted-80);
+  --color-ink-muted-48: var(--color-ink-muted-48);
+  --color-divider-soft: var(--color-divider-soft);
+  --color-hairline: var(--color-hairline);
+  --color-canvas: var(--color-canvas);
+  --color-canvas-parchment: var(--color-canvas-parchment);
+  --color-surface-pearl: var(--color-surface-pearl);
+  --color-surface-tile-1: var(--color-surface-tile-1);
+  --color-surface-tile-2: var(--color-surface-tile-2);
+  --color-surface-tile-3: var(--color-surface-tile-3);
+  --color-surface-black: var(--color-surface-black);
+  --color-surface-chip-translucent: var(--color-surface-chip-translucent);
+  --color-on-primary: var(--color-on-primary);
+  --color-on-dark: var(--color-on-dark);
+
+  --font-display: "SF Pro Display", "Inter", system-ui, -apple-system, sans-serif;
+  --font-text: "SF Pro Text", "Inter", system-ui, -apple-system, sans-serif;
+
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 17px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-section: 80px;
+
+  --shadow-product: 0 3px 5px rgba(0, 0, 0, 0.05), 0 5px 30px rgba(0, 0, 0, 0.22);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-text);
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer utilities {
+  .tracking-tight-apple {
+    letter-spacing: -0.022em;
+  }
+  .tracking-tight-apple-display {
+    letter-spacing: -0.005em;
+  }
+  
+  .backdrop-blur-nav {
+    backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .btn-primary {
+    @apply bg-primary text-on-primary rounded-full px-[22px] py-[11px] transition-transform active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-primary-focus focus-visible:ring-offset-2;
+  }
+  
+  .btn-dark-utility {
+    letter-spacing: -0.022em;
+    @apply bg-ink text-on-dark rounded-md px-[15px] py-[8px] text-[14px] transition-transform active:scale-95 outline-none focus-visible:ring-2 focus-visible:ring-primary-focus focus-visible:ring-offset-2;
+  }
+
+  .nav-frosted {
+    @apply bg-canvas-parchment/80 min-h-[52px] py-1 border-b border-hairline sticky top-0 z-40 transition-transform duration-300;
+    backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

@@ -1,0 +1,193 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NavBar from './NavBar.astro';
+import RulerCanvas from './RulerCanvas.astro';
+import CalibrationModal from './CalibrationModal.astro';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  lang: 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'ru' | 'hi';
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const faqs = [
+  {
+    q: "Can I use my phone as a ruler?",
+    a: "Yes, you can easily use your phone as a ruler. Simply open our online ruler tool in your mobile browser, and it will auto-calibrate to your device's screen, giving you an accurate, real-size ruler directly on your phone display."
+  },
+  {
+    q: "Is there a ruler online?",
+    a: "Yes, there are multiple online rulers available, but our free online ruler is designed to be the most accurate. It features precise calibration methods, supports inches, cm, and mm, and works on any device."
+  },
+  {
+    q: "How to identify 1 inch?",
+    a: "To identify 1 inch, you can use our calibrated online ruler inches setting. Alternatively, for a quick reference without a ruler, an adult thumb is roughly one inch wide from the knuckle to the tip."
+  },
+  {
+    q: "How to measure cm online?",
+    a: "Measuring cm online is simple. Open our tool, select the 'cm' unit from the navigation bar, and follow the calibration instructions (like holding a standard credit card to the screen). Once calibrated, you have a 100% accurate online ruler cm at your disposal."
+  },
+  {
+    q: "Can a smart phone measure?",
+    a: "Yes, a smartphone can measure objects perfectly. You can use a web-based tool like our actual size online ruler to measure objects placed on the screen, or use built-in augmented reality (AR) camera apps depending on the precision you need."
+  },
+  {
+    q: "Can I use my camera as a ruler?",
+    a: "While you can use online ruler camera apps that rely on AR technology to measure room dimensions, they are often slightly inaccurate. For highly precise, millimeter-accurate measurements, it is better to place the object against a calibrated on-screen ruler."
+  },
+  {
+    q: "Can we measure online?",
+    a: "Absolutely. You can measure physical objects online by using a calibrated on-screen ruler. By matching your screen's pixel density to a known physical object (like a credit card), our online ruler tool provides an exactly scaled measurement workspace."
+  },
+  {
+    q: "How to read a ruler online?",
+    a: "Reading an online ruler is just like reading a physical one. Ensure the unit is set to your preference (inches or cm). Align your object with the zero mark, and read the closest tick mark to the object's edge. Our tool even features interactive crosshairs to help you read precise coordinates."
+  },
+  {
+    q: "How to view ruler in Word online?",
+    a: "Currently, Microsoft Word Online does not have a built-in viewable ruler feature. If you need to measure document margins accurately, you can download the document to the desktop version of Word where the ruler feature is fully supported."
+  },
+  {
+    q: "How to add a ruler in Word online?",
+    a: "You cannot directly add or show a ruler in the Word Online web app, as the feature is excluded to keep the web interface lightweight. To use a ruler, select 'Open in Desktop App' to access the full Microsoft Word features."
+  },
+  {
+    q: "How to show ruler in PowerPoint online?",
+    a: "Similar to Word Online, PowerPoint Online does not support an on-screen ruler. For precise object alignment and layout measuring, you must open your presentation in the PowerPoint Desktop application."
+  },
+  {
+    q: "How to use online ruler?",
+    a: "To use our online ruler, first select your desired unit (cm, mm, or inches). Then, click 'Calibrate' and use a standard credit card or enter your screen diagonal to ensure the scale is 100% accurate. Finally, place your object against the screen edge to measure it."
+  },
+  {
+    q: "How to use a ruler online?",
+    a: "Using a ruler online requires calibration for true accuracy. Once you verify the scale using a standard object like a credit card, you can hold physical items up to your screen or use on-screen interactive guidelines to measure digital assets perfectly."
+  }
+];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.q,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.a
+    }
+  }))
+};
+---
+
+<Layout title={t('nav.title') + " - Measure in cm, mm & inches"} lang={lang}>
+  <RulerCanvas />
+  <NavBar lang={lang} />
+  
+  <main class="flex-1 w-full overflow-y-auto flex flex-col items-center justify-start p-[24px] pb-[120px] relative z-0 mt-[60px]">
+    <!-- Hero Section mirroring Apple's product-tile-light -->
+    <div class="max-w-[800px] w-full bg-canvas rounded-[24px] shadow-product p-[24px] md:p-[80px] flex flex-col items-center text-center">
+      <h1 class="text-[32px] md:text-[56px] font-semibold tracking-tight-apple-display text-ink leading-[1.07] mb-[16px]" set:html={t('hero.title')}>
+      </h1>
+      <p class="text-[17px] md:text-[28px] font-normal tracking-[0.196px] text-ink mb-[32px] md:mb-[48px] leading-[1.14]">
+        {t('hero.subtitle')}
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-[24px] w-full text-left">
+        <!-- Feature 1 -->
+        <div class="bg-canvas-parchment rounded-[18px] p-[24px] border border-hairline">
+          <h3 class="text-[17px] font-semibold tracking-tight-apple text-ink mb-[8px]">{t('feat1.title')}</h3>
+          <p class="text-[14px] text-body-muted leading-[1.43]">{t('feat1.desc')}</p>
+        </div>
+        <!-- Feature 2 -->
+        <div class="bg-canvas-parchment rounded-[18px] p-[24px] border border-hairline">
+          <h3 class="text-[17px] font-semibold tracking-tight-apple text-ink mb-[8px]">{t('feat2.title')}</h3>
+          <p class="text-[14px] text-body-muted leading-[1.43]">{t('feat2.desc')}</p>
+        </div>
+        <!-- Feature 3 -->
+        <div class="bg-canvas-parchment rounded-[18px] p-[24px] border border-hairline">
+          <h3 class="text-[17px] font-semibold tracking-tight-apple text-ink mb-[8px]">{t('feat3.title')}</h3>
+          <p class="text-[14px] text-body-muted leading-[1.43]">{t('feat3.desc')}</p>
+        </div>
+      </div>
+
+      <div class="mt-[48px] flex gap-[16px]">
+        <button class="btn-calibrate-trigger btn-primary text-[17px] tracking-tight-apple">
+          {t('hero.cta')}
+        </button>
+      </div>
+
+      <!-- Keyboard Shortcuts Legend -->
+      <div class="mt-[64px] pt-[32px] border-t border-hairline w-full text-left">
+        <h3 class="text-[12px] font-semibold tracking-widest uppercase text-body-muted mb-[16px]">Keyboard Shortcuts</h3>
+        <div class="flex flex-wrap gap-[16px] md:gap-[32px]">
+          <div class="flex items-center gap-[8px]">
+            <kbd class="px-2 py-1 bg-canvas-parchment border border-hairline rounded-md text-[12px] font-mono text-ink shadow-sm">D</kbd>
+            <span class="text-[14px] text-body-muted">Dark Mode</span>
+          </div>
+          <div class="flex items-center gap-[8px]">
+            <kbd class="px-2 py-1 bg-canvas-parchment border border-hairline rounded-md text-[12px] font-mono text-ink shadow-sm">G</kbd>
+            <span class="text-[14px] text-body-muted">Guidelines</span>
+          </div>
+          <div class="flex items-center gap-[8px]">
+            <kbd class="px-2 py-1 bg-canvas-parchment border border-hairline rounded-md text-[12px] font-mono text-ink shadow-sm">H</kbd>
+            <span class="text-[14px] text-body-muted">Crosshair</span>
+          </div>
+          <div class="flex items-center gap-[8px]">
+            <kbd class="px-2 py-1 bg-canvas-parchment border border-hairline rounded-md text-[12px] font-mono text-ink shadow-sm">F</kbd>
+            <span class="text-[14px] text-body-muted">Fullscreen</span>
+          </div>
+          <div class="flex items-center gap-[8px]">
+            <kbd class="px-2 py-1 bg-canvas-parchment border border-hairline rounded-md text-[12px] font-mono text-ink shadow-sm">↑ ↓ ← →</kbd>
+            <span class="text-[14px] text-body-muted">Toggle Rulers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO Content Section -->
+      <div class="mt-[64px] pt-[64px] border-t border-hairline w-full text-left">
+        <article class="text-ink flex flex-col gap-5 text-[15px] leading-relaxed pb-12 max-w-[700px] mx-auto">
+          <h2 class="text-[28px] font-semibold tracking-tight-apple mb-2">The Ultimate Free Online Ruler for Every Device</h2>
+          <p>Welcome to the most advanced and highly <strong>accurate online ruler</strong> available on the web today. Whether you are working on a craft project, verifying the dimensions of a physical product, or simply need to measure a small item and don't have a physical measuring tape on hand, our <strong>free online ruler</strong> is the perfect solution. Designed to work flawlessly across all devices—from smartphones and tablets to large desktop monitors—this web application transforms your screen into a highly precise <strong>real online ruler</strong>. Best of all, you don't need to download any sketchy software or mobile apps; it works directly in your web browser.</p>
+          
+          <h3 class="text-[20px] font-semibold tracking-tight-apple mt-4">Measure in Inches, Centimeters, and Millimeters</h3>
+          <p>We understand that different projects require different units of measurement. That is why our <strong>online ruler tool</strong> supports a variety of metric and imperial units. If you are in the United States, you can quickly switch to the <strong>online ruler inches</strong> setting to measure items in fractions of an inch. For users who need a standard US letter size reference, our tool easily functions as an <strong>online ruler 12 inch</strong> or a standard <strong>12 inch online ruler</strong> depending on the physical size of your monitor.</p>
+          
+          <p>For international users and those working on precision engineering, jewelry, or scientific projects, the metric system is usually preferred. With a single click, you can activate the <strong>online ruler in cm</strong> (centimeters) or the <strong>online ruler mm</strong> (millimeters). Using the <strong>mm online ruler</strong> setting provides granular, sub-centimeter accuracy, making it an incredibly <strong>accurate online ruler</strong> for tiny screws, rings, and electronic components. No matter if you need an <strong>online ruler cm</strong> or an <strong>online ruler in mm</strong>, the interface adapts instantly.</p>
+
+          <h3 class="text-[20px] font-semibold tracking-tight-apple mt-4">How We Ensure an Online Ruler Actual Size</h3>
+          <p>The biggest challenge with any web-based measuring tool is varying pixel densities. A 100-pixel line on a 4K monitor is physically much smaller than a 100-pixel line on an older 1080p screen. To guarantee an <strong>actual size online ruler</strong>, we have developed a robust calibration system. Our <strong>online ruler to scale</strong> features four distinct calibration methods:</p>
+          <ul class="list-disc pl-6 flex flex-col gap-2 mt-1">
+            <li><strong>Auto-Detect:</strong> Our system attempts to read your device's internal metrics to automatically render an <strong>online ruler inches actual size</strong>.</li>
+            <li><strong>Device Selection:</strong> Browse our database of popular phones, tablets, and monitors to lock in your exact factory PPI.</li>
+            <li><strong>Screen Diagonal:</strong> Simply input your monitor's diagonal size (e.g., 15.6 inches) and we will calculate the perfect <strong>online ruler actual size</strong>.</li>
+            <li><strong>Credit Card Calibration:</strong> Place any standard credit card against your screen and adjust a visual slider until they match. This is the foolproof way to get an <strong>online ruler to scale</strong> on any unknown display.</li>
+          </ul>
+
+          <h3 class="text-[20px] font-semibold tracking-tight-apple mt-4">Advanced Features for Professionals</h3>
+          <p>While some users might search for an <strong>online ruler camera</strong> to measure room dimensions via augmented reality, our tool specializes in direct, on-screen physical measurements. To enhance your workflow, we have included interactive guidelines. By simply clicking anywhere on your screen, you can drop a permanent crosshair that projects horizontal and vertical lines straight to the rulers, providing you with exact X and Y coordinates. This makes it effortless to align objects and measure them simultaneously against an <strong>online ruler cm</strong> and an <strong>online ruler inches</strong>.</p>
+          
+          <p>Furthermore, our <strong>real online ruler</strong> is built with accessibility and ease of use in mind. We feature a stunning dark mode to reduce eye strain, full keyboard shortcuts for rapid toggling, and multi-language support. From a quick <strong>12 inch online ruler</strong> check to highly precise <strong>online ruler in mm</strong> measurements, this is the only digital measuring tool you will ever need. Bookmark us today and never worry about misplacing your physical ruler again!</p>
+        </article>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-[32px] pt-[64px] border-t border-hairline w-full text-left max-w-[700px] mx-auto pb-[64px]">
+        <h2 class="text-[28px] font-semibold tracking-tight-apple mb-8 text-ink">Frequently Asked Questions</h2>
+        <div class="flex flex-col gap-4">
+          {faqs.map(faq => (
+            <div class="bg-canvas-parchment p-5 rounded-[16px] border border-hairline">
+              <h3 class="font-semibold text-ink mb-2 text-[16px]">{faq.q}</h3>
+              <p class="text-body-muted text-[14px] leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <CalibrationModal lang={lang} />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</Layout>
