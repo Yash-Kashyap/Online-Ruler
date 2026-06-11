@@ -1,0 +1,31 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+<PageLayout title="Privacy Policy - Online Ruler">
+  <h1 class="text-[32px] md:text-[40px] font-semibold tracking-tight-apple mb-6">Privacy Policy</h1>
+  
+  <p class="text-body-muted mb-6">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+
+  <p>At <strong>Online Ruler</strong>, we respect your privacy and are committed to protecting it. This Privacy Policy explains what information we collect, how we use it, and your rights.</p>
+
+  <h2 class="text-[20px] font-semibold tracking-tight-apple mt-6 mb-2">1. Information We Collect</h2>
+  <p>Our tool is designed to be entirely client-side. We do not collect, store, or transmit your personal data to our servers. Any calibration settings you create (such as screen diagonal or PPI) are stored locally in your browser using `localStorage`.</p>
+
+  <h2 class="text-[20px] font-semibold tracking-tight-apple mt-6 mb-2">2. Local Storage</h2>
+  <p>We use your browser's local storage to save your preferences, such as:</p>
+  <ul class="list-disc pl-6 flex flex-col gap-1 mt-2">
+    <li>Selected unit of measurement (cm, mm, inches)</li>
+    <li>Calibration settings (Pixels Per Inch)</li>
+    <li>Dark or Light theme preference</li>
+  </ul>
+  <p class="mt-2">This data never leaves your device and is only used to ensure your ruler is calibrated correctly the next time you visit.</p>
+
+  <h2 class="text-[20px] font-semibold tracking-tight-apple mt-6 mb-2">3. Analytics</h2>
+  <p>We may use privacy-friendly analytics tools to understand basic traffic patterns on our website. These tools do not track individual users or collect personally identifiable information (PII).</p>
+
+  <h2 class="text-[20px] font-semibold tracking-tight-apple mt-6 mb-2">4. Changes to This Policy</h2>
+  <p>We may update this Privacy Policy from time to time. Any changes will be posted directly on this page.</p>
+
+  <h2 class="text-[20px] font-semibold tracking-tight-apple mt-6 mb-2">5. Contact Us</h2>
+  <p>If you have any questions about this Privacy Policy, please visit our <a href="/contact" class="text-primary hover:underline">Contact Us</a> page.</p>
+</PageLayout>

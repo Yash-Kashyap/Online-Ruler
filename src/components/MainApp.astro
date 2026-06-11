@@ -85,7 +85,7 @@ const schema = {
   <RulerCanvas />
   <NavBar lang={lang} />
   
-  <main class="flex-1 w-full overflow-y-auto flex flex-col items-center justify-start p-[24px] pb-[120px] relative z-0 mt-[60px]">
+  <main class="flex-1 min-h-0 w-full overflow-y-auto flex flex-col items-center justify-start p-[24px] pb-[120px] relative z-0 mt-[60px]">
     <!-- Hero Section mirroring Apple's product-tile-light -->
     <div class="max-w-[800px] w-full bg-canvas rounded-[24px] shadow-product p-[24px] md:p-[80px] flex flex-col items-center text-center">
       <h1 class="text-[32px] md:text-[56px] font-semibold tracking-tight-apple-display text-ink leading-[1.07] mb-[16px]" set:html={t('hero.title')}>
@@ -116,6 +116,14 @@ const schema = {
         <button class="btn-calibrate-trigger btn-primary text-[17px] tracking-tight-apple">
           {t('hero.cta')}
         </button>
+      </div>
+
+      <!-- Quick Info Links -->
+      <div class="mt-[32px] flex flex-wrap items-center justify-center gap-4 md:gap-6 text-[14px] font-medium text-ink">
+        <a href="/about" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">About Us</a>
+        <a href="/contact" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Contact Us</a>
+        <a href="/privacy" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Privacy Policy</a>
+        <a href="/terms" class="hover:opacity-70 transition-opacity underline decoration-hairline underline-offset-4">Terms & Conditions</a>
       </div>
 
       <!-- Keyboard Shortcuts Legend -->
@@ -184,6 +192,17 @@ const schema = {
           ))}
         </div>
       </div>
+
+      <!-- Footer Links -->
+      <footer class="w-full max-w-[700px] mx-auto border-t border-hairline pt-8 pb-4 text-center text-body-muted text-[14px]">
+        <div class="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-4">
+          <a href="/about" class="hover:text-ink transition-colors">About Us</a>
+          <a href="/contact" class="hover:text-ink transition-colors">Contact Us</a>
+          <a href="/privacy" class="hover:text-ink transition-colors">Privacy Policy</a>
+          <a href="/terms" class="hover:text-ink transition-colors">Terms & Conditions</a>
+        </div>
+        <p>&copy; {new Date().getFullYear()} Online Ruler. All rights reserved.</p>
+      </footer>
     </div>
   </main>
 

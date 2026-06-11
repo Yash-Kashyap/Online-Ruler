@@ -40,7 +40,7 @@ const { title, description = "Free online ruler to measure in inches, cm, and mm
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 	</head>
-	<body class="antialiased h-screen flex flex-col relative overflow-hidden bg-canvas">
+	<body class="antialiased h-[100dvh] flex flex-col relative overflow-hidden bg-canvas">
 		<script is:inline>
 			const theme = (() => {
 				if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
